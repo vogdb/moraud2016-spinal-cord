@@ -1,0 +1,51 @@
+{xopen("NeuralNetwork.hoc")}
+
+func cell_append() {
+	$o1.append($o2)
+	$o2.position($3,$4,$5)
+	return $o1.count - 1
+}
+
+objref cells_moto, cells_1af, cell, source, nclist, netcon, stim, nc, nil
+cells_moto = new List()
+cells_1af = new List()
+
+objectvar AP_MN_Flex[nMN]
+objectvar AP_IA_Flex[nIAf]
+
+//MOTORNEURONS
+for (i=0; i < nMN; i+=1) {
+    cell = new M_Cell()
+    {cell_append(cells_moto, cell, 200+i*10, 200, 200)}
+    {cell.geom(i)}
+    {cell.synapses(i)}
+    //nc - is the spike detector that is located at the axon end of the cell. don't pay attention to 'nil'. it's a hacky feature.
+    nc = cell.connect2target(nil)
+    AP_MN_Flex[i] = new Vector()
+    nc.record(AP_MN_Flex[i])
+}
+
+//IA_fiber
+for (i=0; i < nIAf; i += 1) {
+  cell = new IA_fiber()
+  {cell_append(cells_1af, cell, 0, 0, 0)}
+  nc = cell.connect2target(nil)
+  AP_IA_Flex[i] = new Vector()
+  nc.record(AP_IA_Flex[i])
+}
+
+
+//SYNAPSES BETWEEN IAf AND MOTONEURONS
+//EACH MOTONEURON IS CONNECTED TO ALL Ia FIBERS
+{r.uniform(0, nIAf-1)}
+for i=0, nMN-1{
+    target = cells_moto.object(i)
+    for j=0, nIAf-1{
+        syn = target.synlist.object(j)
+        source = cells_1af.object(j)
+        //nc = new NetCon(source, syn)
+        nc = source.connect2target(syn)
+        nc.weight = hi_motor_S
+        nc.delay = Ia+taur.normal(0,0.03)
+    }
+}
