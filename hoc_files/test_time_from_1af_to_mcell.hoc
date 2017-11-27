@@ -49,3 +49,18 @@ for i=0, nMN-1{
         nc.delay = Ia+taur.normal(0,0.03)
     }
 }
+
+
+
+//
+
+//writing results
+objref f2
+f2 = new File()
+f2.wopen("test_time_from_1af_to_mcell.result.txt")
+objref vec
+vec = new Vector(3)
+vec.indgen()
+vec.printf()
+vec.printf(f2, "%6.4f ")
+vec.printf(f2, "%6.4f ")
