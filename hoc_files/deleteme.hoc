@@ -1,0 +1,64 @@
+objectvar D
+objectvar file
+objectvar Leq
+objref r
+
+ndend=12
+nnode=41
+
+D = new Vector(ndend)
+Leq=new Vector(ndend)
+
+file=new File()
+{file.ropen("../Info/diamdend_rat")}
+for i=0, ndend-1 {
+    D.x[i]=file.scanvar()
+}
+{file.close()}
+
+file=new File()
+{file.ropen("../Info/lengthdend")}
+for i=0, ndend-1 {
+    Leq.x[i]=file.scanvar()
+}
+{file.close()}
+
+{create soma[1.]}
+{create dendrite[ndend]}
+{create inseg[1.]}
+
+inseg{
+	nseg=5
+	L=1000
+	diam=10
+	insert initial
+	gnap_initial=0
+	Ra = 200
+        cm = 2
+}
+
+
+soma[0]{
+	nseg=1
+	L=36
+	diam=36
+}
+
+for i=0, ndend-1 {
+dendrite[i]{
+	nseg=11
+	diam=D.x[i]
+	L=Leq.x[i]
+}
+}
+
+
+//Connections
+
+{soma[0.] connect inseg[0.](0), 0}
+{soma[0.] connect dendrite[0.](0), 1}
+for i=0,ndend-2{
+{dendrite[i] connect dendrite[i+1](0), 1}
+}
+
+topology()
