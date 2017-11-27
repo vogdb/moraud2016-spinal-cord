@@ -6,12 +6,21 @@ func cell_append() {
 	return $o1.count - 1
 }
 
-objref cells_moto, cells_1af, cell, source, nclist, netcon, stim, nc, nil
+objref cells_moto, cells_1af, nc_1af_stim
+objref cell, source, nc, nil, stim_1af
 cells_moto = new List()
 cells_1af = new List()
+nc_1af_stim = new List()
 
 objectvar AP_MN_Flex[nMN]
 objectvar AP_IA_Flex[nIAf]
+
+
+stim_1af = new NetStim()
+stim_1af.interval = 10
+stim_1af.number = 100
+stim_1af.start = 1
+stim_1af.noise = 0
 
 //MOTORNEURONS
 for (i=0; i < nMN; i+=1) {
@@ -29,6 +38,7 @@ for (i=0; i < nMN; i+=1) {
 for (i=0; i < nIAf; i += 1) {
   cell = new IA_fiber()
   {cell_append(cells_1af, cell, 0, 0, 0)}
+  nc_1af_stim.append(new NetCon(stim_1af, cell.pp))
   nc = cell.connect2target(nil)
   AP_IA_Flex[i] = new Vector()
   nc.record(AP_IA_Flex[i])
@@ -52,9 +62,21 @@ for i=0, nMN-1{
 
 
 
-//
+
+//displaying soma's voltage and current at the end (1) where dendrites are attached
+objref g
+g = new Graph()
+g.size(0,5,-80,40)
+for (i=0; i < nMN; i+=1) {
+	g.addvar("cells_moto.o(i).soma.v(1)", 1, 1, 0.6, 0.9, 2)
+}
+
+dt = 0.5
+tstop = 20
+run()
 
 //writing results
+/*
 objref f2
 f2 = new File()
 f2.wopen("test_time_from_1af_to_mcell.result.txt")
@@ -64,3 +86,4 @@ vec.indgen()
 vec.printf()
 vec.printf(f2, "%6.4f ")
 vec.printf(f2, "%6.4f ")
+*/

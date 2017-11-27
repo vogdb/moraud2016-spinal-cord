@@ -58,7 +58,7 @@ dendrite[i]{
 {soma[0.] connect inseg[0.](0), 0}
 {soma[0.] connect dendrite[0.](0), 1}
 for i=0,ndend-2{
-{dendrite[i] connect dendrite[i+1](0), 1}
+  {dendrite[i] connect dendrite[i+1](0), 1}
 }
 
 topology()
